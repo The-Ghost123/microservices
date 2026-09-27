@@ -1,0 +1,41 @@
+services:
+  product-service:
+    build: ./product-service
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=product-db
+      - DB_USER=appuser
+      - DB_PASSWORD=apppassword
+      - DB_NAME=productdb
+    depends_on:
+      product-db:
+        condition: service_healthy
+    networks:
+      - microservices-network
+
+  product-db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_DATABASE=productdb
+      - MYSQL_USER=appuser
+      - MYSQL_PASSWORD=apppassword
+      - MYSQL_ROOT_PASSWORD=rootpassword
+    volumes:
+      - product-db-data:/var/lib/mysql
+      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "--user=root", "--password=rootpassword"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+    networks:
+      - microservices-network
+
+networks:
+  microservices-network:
+    driver: bridge
+
+volumes:
+  product-db-data:
