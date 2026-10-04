@@ -1,4 +1,5 @@
 const productModel = require('../models/productModel');
+const { validateImage } = require('../helpers/imageValidator');
 
 // GET /products - Ambil semua produk
 async function index(req, res) {
@@ -6,12 +7,12 @@ async function index(req, res) {
         const products = await productModel.getAllProducts();
         res.json({
             message: 'Berhasil mengambil data produk',
-            data: products
+            data: products,
         });
     } catch (error) {
         res.status(500).json({
             message: 'Gagal mengambil data produk',
-            error: error.message
+            error: error.message,
         });
     }
 }
@@ -22,17 +23,17 @@ async function show(req, res) {
         const product = await productModel.getProductById(req.params.id);
         if (!product) {
             return res.status(404).json({
-                message: 'Produk tidak ditemukan'
+                message: 'Produk tidak ditemukan',
             });
         }
         res.json({
             message: 'Berhasil mengambil data produk',
-            data: product
+            data: product,
         });
     } catch (error) {
         res.status(500).json({
             message: 'Gagal mengambil data produk',
-            error: error.message
+            error: error.message,
         });
     }
 }
@@ -40,23 +41,39 @@ async function show(req, res) {
 // POST /products - Buat produk baru
 async function create(req, res) {
     try {
-        const { name, description, price, stock } = req.body;
+        const { name, description, price, stock, image } = req.body;
 
+        // Validasi field wajib non-image
         if (!name || price === undefined || price === null) {
             return res.status(400).json({
-                message: 'Field name dan price wajib diisi'
+                message: 'Field name dan price wajib diisi',
             });
         }
 
-        const product = await productModel.createProduct({ name, description, price, stock });
+        // Validasi image Base64
+        const imgValidation = validateImage(image);
+        if (!imgValidation.valid) {
+            return res.status(400).json({
+                message: imgValidation.error,
+            });
+        }
+
+        const product = await productModel.createProduct({
+            name,
+            description,
+            price,
+            stock,
+            image: imgValidation.clean, // simpan Base64 tanpa prefix Data URI
+        });
+
         res.status(201).json({
             message: 'Produk berhasil dibuat',
-            data: product
+            data: product,
         });
     } catch (error) {
         res.status(500).json({
             message: 'Gagal membuat produk',
-            error: error.message
+            error: error.message,
         });
     }
 }
@@ -67,20 +84,36 @@ async function update(req, res) {
         const existing = await productModel.getProductById(req.params.id);
         if (!existing) {
             return res.status(404).json({
-                message: 'Produk tidak ditemukan'
+                message: 'Produk tidak ditemukan',
             });
         }
 
-        const { name, description, price, stock } = req.body;
-        const updated = await productModel.updateProduct(req.params.id, { name, description, price, stock });
+        const { name, description, price, stock, image } = req.body;
+
+        // Validasi image Base64
+        const imgValidation = validateImage(image);
+        if (!imgValidation.valid) {
+            return res.status(400).json({
+                message: imgValidation.error,
+            });
+        }
+
+        const updated = await productModel.updateProduct(req.params.id, {
+            name,
+            description,
+            price,
+            stock,
+            image: imgValidation.clean, // simpan Base64 tanpa prefix Data URI
+        });
+
         res.json({
             message: 'Produk berhasil diperbarui',
-            data: updated
+            data: updated,
         });
     } catch (error) {
         res.status(500).json({
             message: 'Gagal memperbarui produk',
-            error: error.message
+            error: error.message,
         });
     }
 }
@@ -91,18 +124,18 @@ async function destroy(req, res) {
         const existing = await productModel.getProductById(req.params.id);
         if (!existing) {
             return res.status(404).json({
-                message: 'Produk tidak ditemukan'
+                message: 'Produk tidak ditemukan',
             });
         }
 
         await productModel.deleteProduct(req.params.id);
         res.json({
-            message: 'Produk berhasil dihapus'
+            message: 'Produk berhasil dihapus',
         });
     } catch (error) {
         res.status(500).json({
             message: 'Gagal menghapus produk',
-            error: error.message
+            error: error.message,
         });
     }
 }

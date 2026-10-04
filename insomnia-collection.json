@@ -1,0 +1,105 @@
+{
+  "_type": "export",
+  "__export_format": 4,
+  "__export_date": "2026-10-03",
+  "__export_source": "insomnia",
+  "resources": [
+    {
+      "_id": "wrk_product_service",
+      "_type": "workspace",
+      "name": "Product Service API",
+      "description": "REST API untuk manajemen produk"
+    },
+    {
+      "_id": "env_base",
+      "_type": "environment",
+      "parentId": "wrk_product_service",
+      "name": "Base Environment",
+      "data": {
+        "base_url": "http://localhost:3000"
+      }
+    },
+    {
+      "_id": "fld_products",
+      "_type": "request_group",
+      "parentId": "wrk_product_service",
+      "name": "Products"
+    },
+    {
+      "_id": "req_health",
+      "_type": "request",
+      "parentId": "wrk_product_service",
+      "name": "Health Check",
+      "method": "GET",
+      "url": "{{ _.base_url }}/health",
+      "headers": [],
+      "body": {}
+    },
+    {
+      "_id": "req_get_all",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "Get All Products",
+      "method": "GET",
+      "url": "{{ _.base_url }}/products",
+      "headers": [],
+      "body": {}
+    },
+    {
+      "_id": "req_get_by_id",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "Get Product by ID",
+      "method": "GET",
+      "url": "{{ _.base_url }}/products/1",
+      "headers": [],
+      "body": {}
+    },
+    {
+      "_id": "req_create",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "Create Product",
+      "method": "POST",
+      "url": "{{ _.base_url }}/products",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Monitor 24 inch\",\n  \"description\": \"Monitor IPS Full HD 1080p\",\n  \"price\": 2500000,\n  \"stock\": 5,\n  \"image\": \"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADU1EQVR42mNkYPhfDwAChWGA60e6kgAAAABJRU5BrkJggg==\"\n}"
+      }
+    },
+    {
+      "_id": "req_update",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "Update Product",
+      "method": "PUT",
+      "url": "{{ _.base_url }}/products/1",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "mimeType": "application/json",
+        "text": "{\n  \"name\": \"Monitor 24 inch FHD\",\n  \"description\": \"Monitor IPS Full HD 1080p - Updated\",\n  \"price\": 2700000,\n  \"stock\": 8,\n  \"image\": \"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADU1EQVR42mNkYPhfDwAChWGA60e6kgAAAABJRU5BrkJggg==\"\n}"
+      }
+    },
+    {
+      "_id": "req_delete",
+      "_type": "request",
+      "parentId": "fld_products",
+      "name": "Delete Product",
+      "method": "DELETE",
+      "url": "{{ _.base_url }}/products/1",
+      "headers": [],
+      "body": {}
+    }
+  ]
+}

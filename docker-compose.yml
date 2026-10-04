@@ -23,7 +23,7 @@ services:
       - MYSQL_ROOT_PASSWORD=rootpassword
     volumes:
       - product-db-data:/var/lib/mysql
-      - ./database/schema.sql:/docker-entrypoint-initdb.d/schema.sql
+      - ./database:/docker-entrypoint-initdb.d
     healthcheck:
       test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "--user=root", "--password=rootpassword"]
       interval: 10s
