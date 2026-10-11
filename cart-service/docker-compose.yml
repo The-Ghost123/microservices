@@ -1,0 +1,81 @@
+# docker-compose.yml
+# Menjalankan cart-service beserta database PostgreSQL miliknya sendiri.
+# Nanti compose dari semua service akan digabung jadi satu.
+
+services:
+  cart-service:
+    build: .
+    ports:
+      - "3001:3001"
+    environment:
+      - DB_CONNECTION=pgsql
+      - DB_HOST=cart-db
+      - DB_PORT=5432
+      - DB_DATABASE=cartdb
+      - DB_USERNAME=appuser
+      - DB_PASSWORD=apppassword
+      - LOG_CHANNEL=stderr # log tampil di `docker compose logs`
+    depends_on:
+      cart-db:
+        condition: service_healthy
+
+  cart-db:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=cartdb
+      - POSTGRES_USER=appuser
+      - POSTGRES_PASSWORD=apppassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - cart-db-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U appuser -d cartdb"]
+      interval: 10s
+      retries: 5
+      timeout: 5s
+
+# ---------------------------------------------------------------------------
+# product-service yang dibuat sebelumnya (folder ../product-service).
+# Kalau folder product-service sejajar dengan folder cart-service, aktifkan blok
+# di bawah supaya kedua service jalan dengan satu perintah. Caranya: blok baris dari
+# "# product-service:" sampai akhir healthcheck, lalu tekan Ctrl+/ di VS Code
+# (atau hapus karakter "# " beserta satu spasi sesudahnya di tiap baris).
+# Port tidak bentrok: product-service 3000, MySQL 3306, cart-service 3001.
+# ---------------------------------------------------------------------------
+#
+# product-service:
+#   build: ../product-service
+#   ports:
+#     - "3000:3000"
+#   environment:
+#     - DB_HOST=product-db
+#     - DB_USER=appuser
+#     - DB_PASSWORD=apppassword
+#     - DB_NAME=productdb
+#   depends_on:
+#     product-db:
+#       condition: service_healthy
+#
+# product-db:
+#   image: mysql:8.0
+#   environment:
+#     - MYSQL_ROOT_PASSWORD=rootpassword
+#     - MYSQL_DATABASE=productdb
+#     - MYSQL_USER=appuser
+#     - MYSQL_PASSWORD=apppassword
+#   ports:
+#     - "3306:3306"
+#   volumes:
+#     - product-db-data:/var/lib/mysql
+#     - ../product-service/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+#   healthcheck:
+#     test: ["CMD", "mysqladmin", "ping", "--host=localhost", "--user=root", "--password=rootpassword"]
+#     interval: 10s
+#     retries: 5
+#     start_period: 30s
+#     timeout: 5s
+
+volumes:
+  cart-db-data:
+#   product-db-data: # aktifkan bersama blok product-service di atas

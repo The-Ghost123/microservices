@@ -6,7 +6,7 @@ const app = express();
 
 app.use(cors());
 // Naikkan limit ke 3 MB agar payload Base64 image bisa ditampung
-app.use(express.json({ limit: '3mb' }));
+app.use(express.json({ limit: '2mb' }));
 
 // endpoint for healthcheck
 app.get('/health', (req, res) => {
