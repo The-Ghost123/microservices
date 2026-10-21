@@ -1,0 +1,122 @@
+# docker-compose.yml
+# Menjalankan review-service beserta database MongoDB miliknya, ditambah product-service
+# (folder ../product-service) karena review-service memeriksa produk ke sana.
+# Nanti compose dari semua service akan digabung jadi satu.
+
+services:
+  review-service:
+    build: .
+    ports:
+      - "3002:3002"
+    environment:
+      - HOST=0.0.0.0
+      - PORT=3002
+      - FLASK_DEBUG=1
+      - MONGO_URI=mongodb://appuser:apppassword@review-db:27017/?authSource=admin
+      - MONGO_DB_NAME=reviewdb
+      - PRODUCT_SERVICE_URL=http://product-service:3000
+    depends_on:
+      review-db:
+        condition: service_healthy
+      product-service:
+        condition: service_started
+
+  review-db:
+    image: mongo:7
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=appuser
+      - MONGO_INITDB_ROOT_PASSWORD=apppassword
+    ports:
+      - "27017:27017"
+    volumes:
+      - review-db-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping').ok"]
+      interval: 10s
+      retries: 5
+      start_period: 20s
+      timeout: 5s
+
+  # product-service dari panduan sebelumnya. Folder product-service harus sejajar
+  # dengan folder review-service, karena build dan init.sql dirujuk lewat ../product-service.
+  # Di dalam jaringan Docker, review-service memanggilnya lewat nama service: product-service:3000.
+  product-service:
+    build: ../product-service
+    ports:
+      - "3000:3000"
+    environment:
+      - DB_HOST=product-db
+      - DB_USER=appuser
+      - DB_PASSWORD=apppassword
+      - DB_NAME=productdb
+    depends_on:
+      product-db:
+        condition: service_healthy
+
+  product-db:
+    image: mysql:8.0
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpassword
+      - MYSQL_DATABASE=productdb
+      - MYSQL_USER=appuser
+      - MYSQL_PASSWORD=apppassword
+    ports:
+      - "3306:3306"
+    volumes:
+      - product-db-data:/var/lib/mysql
+      - ../product-service/database/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "--host=localhost", "--user=root", "--password=rootpassword"]
+      interval: 10s
+      retries: 5
+      start_period: 30s
+      timeout: 5s
+
+# ---------------------------------------------------------------------------
+# cart-service dari panduan sebelumnya (folder ../cart-service). Opsional: aktifkan
+# kalau ingin menjalankan ketiga service sekaligus. Caranya: blok baris dari
+# "# cart-service:" sampai akhir healthcheck cart-db, lalu tekan Ctrl+/ di VS Code
+# (atau hapus karakter "# " beserta satu spasi sesudahnya di tiap baris).
+# Port tidak bentrok: product 3000, MySQL 3306, cart 3001, PostgreSQL 5432,
+# review 3002, MongoDB 27017.
+# ---------------------------------------------------------------------------
+#
+# cart-service:
+#   build: ../cart-service
+#   ports:
+#     - "3001:3001"
+#   environment:
+#     - DB_CONNECTION=pgsql
+#     - DB_HOST=cart-db
+#     - DB_PORT=5432
+#     - DB_DATABASE=cartdb
+#     - DB_USERNAME=appuser
+#     - DB_PASSWORD=apppassword
+#     - PRODUCT_SERVICE_URL=http://product-service:3000
+#     - LOG_CHANNEL=stderr
+#   depends_on:
+#     cart-db:
+#       condition: service_healthy
+#     product-service:
+#       condition: service_started
+#
+# cart-db:
+#   image: postgres:16-alpine
+#   environment:
+#     - POSTGRES_DB=cartdb
+#     - POSTGRES_USER=appuser
+#     - POSTGRES_PASSWORD=apppassword
+#   ports:
+#     - "5432:5432"
+#   volumes:
+#     - cart-db-data:/var/lib/postgresql/data
+#   healthcheck:
+#     test: ["CMD-SHELL", "pg_isready -U appuser -d cartdb"]
+#     interval: 10s
+#     retries: 5
+#     timeout: 5s
+
+volumes:
+  review-db-data:
+  product-db-data:
+  # cart-db-data: # untuk blok cart-service

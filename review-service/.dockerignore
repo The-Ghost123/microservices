@@ -1,0 +1,4 @@
+# Folder dan file ini tidak perlu ikut disalin ke image.
+venv/
+__pycache__/
+.env
