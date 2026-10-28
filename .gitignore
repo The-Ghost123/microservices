@@ -1,0 +1,22 @@
+# Environment files
+.env
+.env.*
+!.env.example
+
+# Logs and cache
+*.log
+.phpunit.result.cache
+/.phpunit.cache
+
+# Dependencies
+vendor/
+node_modules/
+
+# OS and IDE files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Untracked frontend ui not part of microservices assignment
+ecommerce-ui/
