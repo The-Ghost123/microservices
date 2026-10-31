@@ -1,4 +1,7 @@
-# Folder ini dibuat ulang di dalam image lewat composer install,
-# jadi tidak perlu ikut disalin dari komputer lokal.
+# Folder dan file yang tidak boleh disalin ke dalam Docker image
+.env
+.git
+.gitignore
+tests/
 vendor/
 node_modules/

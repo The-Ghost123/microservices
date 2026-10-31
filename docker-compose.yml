@@ -46,7 +46,7 @@ services:
     ports:
       - "3001:3001"
     environment:
-      - APP_KEY=base64:c29tZXJhbmRvbWtleWZvcmNhcnRzZXJ2aWNlMTIzNDU2
+      - APP_KEY=base64:c29tZXJhbmRvbWtleWZvcmNhcnRzZXJ2aWNlMTIzNDU=
       - DB_CONNECTION=pgsql
       - DB_HOST=cart-db
       - DB_PORT=5432
@@ -131,7 +131,7 @@ services:
     environment:
       - APP_NAME=order-service
       - APP_ENV=production
-      - APP_KEY=base64:c29tZXJhbmRvbWtleWZvcm9yZGVyc2VydmljZTEyMzQ1Ng==
+      - APP_KEY=base64:c29tZXJhbmRvbWtleWZvcm9yZGVyc2VydmljZTEyMzQ=
       - APP_DEBUG=true
       - APP_URL=http://localhost:3003
       - DB_CONNECTION=mysql

@@ -20,4 +20,4 @@ RUN composer install --no-interaction --prefer-dist --optimize-autoloader
 EXPOSE 3003
 
 # Jalankan migration dulu, baru nyalakan server.
-CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=3003"]
+CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=3003 --no-reload"]
