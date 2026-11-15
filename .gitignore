@@ -18,5 +18,4 @@ Thumbs.db
 .idea/
 .vscode/
 
-# Untracked frontend ui not part of microservices assignment
-ecommerce-ui/
+
