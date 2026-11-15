@@ -2,7 +2,7 @@
 // Kerangka aplikasi utama POSTERKU: Navigasi, pemilih user ID, modal informasi, rute halaman, dan notifikasi toast.
 
 import { useState } from 'react'
-import { Link, Route, Routes } from 'react-router-dom'
+import { Link, Route, Routes, useLocation } from 'react-router-dom'
 import Footer from './components/Footer'
 import InfoModals from './components/InfoModals'
 import Navbar from './components/Navbar'
@@ -15,6 +15,7 @@ import ProductDetailPage from './pages/ProductDetailPage'
 import ProductListPage from './pages/ProductListPage'
 
 export default function App() {
+  const location = useLocation()
   // User aktif disimpan di localStorage agar status user tidak hilang saat refresh
   const [userId, setUserId] = useState(() => Number(localStorage.getItem('userId')) || 1)
   const [activeModal, setActiveModal] = useState(null)
@@ -50,7 +51,7 @@ export default function App() {
       />
 
       {/* Main Content Area */}
-      <main className="main-content">
+      <main className="main-content" key={location.pathname}>
         <Routes>
           <Route
             path="/"

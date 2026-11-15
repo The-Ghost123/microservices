@@ -54,20 +54,8 @@ export default function Navbar({ userId, onUserChange, onOpenInfoModal }) {
           <NavLink to="/" end className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
             Katalog Produk
           </NavLink>
-          <button
-            type="button"
-            className="nav-link nav-link-btn"
-            onClick={() => onOpenInfoModal && onOpenInfoModal('pengiriman')}
-          >
-            Pengiriman
-          </button>
-          <button
-            type="button"
-            className="nav-link nav-link-btn"
-            onClick={() => onOpenInfoModal && onOpenInfoModal('kebijakan')}
-          >
-            Kebijakan Retur
-          </button>
+
+
           <NavLink to="/orders" className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}>
             Riwayat Pesanan
           </NavLink>

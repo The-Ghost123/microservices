@@ -8,7 +8,13 @@ import { addToCart } from '../api/cartApi'
 import AsyncView from '../components/AsyncView'
 import ReviewForm from '../components/ReviewForm'
 import StarRating from '../components/StarRating'
-import { BASE64_HEADSET, BASE64_KEYBOARD, BASE64_MOUSE, getProductImage } from '../data/defaultImages'
+import {
+  BASE64_HEADSET,
+  BASE64_KEYBOARD,
+  BASE64_MONITOR,
+  BASE64_MOUSE,
+  getProductImage,
+} from '../data/defaultImages'
 import { useAsync } from '../hooks/useAsync'
 import { describeError, formatDateIndo, formatRupiah } from '../utils/format'
 import { showToast } from '../utils/toast'
@@ -71,6 +77,7 @@ export default function ProductDetailPage({ userId, onOpenInfoModal }) {
                       const pname = (data.product?.name || '').toLowerCase()
                       if (pid === 1 || pname.includes('keyboard')) e.target.src = BASE64_KEYBOARD
                       else if (pid === 2 || pname.includes('mouse')) e.target.src = BASE64_MOUSE
+                      else if (pname.includes('monitor')) e.target.src = BASE64_MONITOR
                       else e.target.src = BASE64_HEADSET
                     }}
                   />
